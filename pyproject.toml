@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timer3"
+authors = [{name="time keepers"}]
+license = {text="MIT"}
+description = "python timer class"
+dynamic = ["version","dependencies"]
+
+[tool.setuptools]
+packages = ["timer3"]
+
+[tool.setuptools.dynamic]
+version = {attr = "timer3.VERSION"}
