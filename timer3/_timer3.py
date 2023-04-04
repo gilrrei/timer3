@@ -107,7 +107,7 @@ class Timer3:
         string += separator + "\n"
         for i in self.sort_by_call_order():
             n, t, s = self.names[i], self.times[i], self.states[i]
-            string += row_format.format(" " * s + n, t)
+            string += row_format.format("  " * s + n, t)
         string += separator + "\n"
         return string
 
