@@ -6,17 +6,43 @@ import csv
 
 
 class Timer3:
-    """Class to time functions or construct timer context."""
+    """Class to time functions or construct timer context.
+
+    Attributes:
+        times (list): List of measured times
+        names (list): List of names of the timed sections
+        states (list): List of states
+        state (int): A state describes if the part to be measured was called within another timer
+                     or not. So state 0 is the outer level, 1 means that the part of the code to
+                     being timed is measured during an other time. 2 means double nested ...
+    """
 
     def __init__(self):
+        """Init the object."""
         self.times = []
         self.names = []
         self.states = []
         self.current_state = -1
-        self.order = []
 
     def timethis(self, log_function=None, name=None):
-        """Decorator factory to time functions."""
+        """Decorator factory to time functions.
+
+        Note that this is not a decorator but a decorator factory such that it needs to be called:
+
+        ```python
+        @timer.timethis()
+        def fun()
+            blabla
+        ```
+
+        Args:
+            log_function (function): This function is used to write verbose output, e.g. print,
+                                     logger.debug, logger.warning...
+            name (str): Name of the function being timed
+
+        Returns:
+            function: A decorator to wrap the function in
+        """
 
         def decorator(fun, name, log_function):
             if name is None:
@@ -33,7 +59,13 @@ class Timer3:
 
     @contextmanager
     def time(self, name, log_function=None):
-        """Context for timing."""
+        """Context for timing.
+
+        Args:
+            log_function (function): This function is used to write verbose output, e.g. print,
+                                     logger.debug, logger.warning...
+            name (str): Name of the context being timed
+        """
         if log_function:
             log_function("Starting " + name)
         self.current_state += 1
@@ -43,13 +75,18 @@ class Timer3:
         self.states.append(self.current_state)
         self.times.append(total_time)
         self.names.append(name)
-        self.order.append(len(self.order))
         self.current_state -= 1
         if log_function:
             log_function(name + f" done, took {total_time}s")
 
     def sort_by_call_order(self, states=None, ids=None, current_state=0):
-        """Sort by correct call order."""
+        """Sort by correct call order.
+
+        Args:
+            states (list): List of states
+            ids (list): List of ids for this states
+            current_state (int): State to order
+        """
         if states is None:
             states = self.states
         if ids is None:
@@ -112,7 +149,11 @@ class Timer3:
         return string
 
     def export_csv(self, file_path):
-        """Export timer three to csv."""
+        """Export timer three to csv.
+
+        Args:
+            file_path (str): Path to export data to.
+        """
         max_state = max(self.states) + 1
         with open(file_path, "w", newline="") as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=",")
